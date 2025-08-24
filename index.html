@@ -3,187 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多小说阅读器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>小说阅读器</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Microsoft YaHei', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-        .app-container {
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            padding: 25px;
             margin-top: 20px;
-        }
-        .header {
-            background: linear-gradient(to right, #2c3e50, #4ca1af);
-            color: white;
-            padding: 20px;
-            text-align: center;
             position: relative;
         }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .book-selector {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        .book-btn {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .book-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        .book-btn.active {
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .main-content {
-            padding: 25px;
-        }
-        .book-info {
+        header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        .book-title {
-            font-size: 32px;
+        h1 {
             color: #2c3e50;
             margin-bottom: 10px;
+            font-size: 32px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
-        .book-author {
-            font-size: 20px;
+        .author {
             color: #7f8c8d;
+            font-size: 18px;
             margin-bottom: 15px;
         }
-        .book-intro {
-            background: #f8f9fa;
+        .intro {
+            background-color: #f9f9f9;
             padding: 20px;
-            border-radius: 10px;
-            font-style: italic;
-            line-height: 1.8;
-            color: #555;
+            border-left: 4px solid #3498db;
             margin: 20px 0;
-            border-left: 4px solid #4ca1af;
+            font-style: italic;
+            color: #555;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.8;
         }
         .chapter-container {
             margin: 30px 0;
         }
         .chapter-title {
             color: #2c3e50;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #eee;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 26px;
             display: flex;
             align-items: center;
-            gap: 10px;
         }
-        .chapter-content {
+        .chapter-title:before {
+            content: "📖";
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        .content {
             font-size: 18px;
             white-space: pre-line;
             text-align: justify;
             line-height: 1.9;
             text-indent: 2em;
-            padding: 0 10px;
-        }
-        .progress-bar {
-            height: 8px;
-            background: #ecf0f1;
-            border-radius: 4px;
-            margin: 25px 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, #4ca1af, #2c3e50);
-            border-radius: 4px;
-            transition: width 0.5s;
-        }
-        .progress-text {
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 16px;
-            margin-bottom: 20px;
+            margin: 0 10px;
         }
         .navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-        .nav-btn {
+        button {
             padding: 14px 30px;
-            background: linear-gradient(to right, #4ca1af, #2c3e50);
+            background: linear-gradient(to right, #3498db, #2980b9);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 17px;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .nav-btn:hover {
+        button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
-        .nav-btn:active {
+        button:active {
             transform: translateY(0);
         }
-        .nav-btn:disabled {
+        button:disabled {
             background: linear-gradient(to right, #bdc3c7, #95a5a6);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+        }
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #7f8c8d;
+        }
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            display: block;
         }
         .loading {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            padding: 60px 0;
+            padding: 40px 0;
         }
         .spinner {
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #4ca1af;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -202,95 +158,104 @@
             text-align: center;
             margin: 20px 0;
         }
-        .empty-state {
-            text-align: center;
-            padding: 60px 0;
-            color: #7f8c8d;
-        }
-        .empty-state i {
-            font-size: 60px;
-            margin-bottom: 20px;
-            color: #bdc3c7;
-            display: block;
-        }
-        .footer {
-            margin-top: 30px;
-            color: white;
-            text-align: center;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        .book-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .action-btn {
-            padding: 10px 20px;
-            background: #4ca1af;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
+        .book-cover {
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            margin: 0 auto 25px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
-        .action-btn:hover {
-            background: #2c3e50;
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
         }
-        @media (max-width: 768px) {
-            .book-selector {
-                flex-direction: column;
-                align-items: center;
-            }
-            .book-btn {
-                width: 80%;
-            }
-            .navigation {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .nav-btn {
-                justify-content: center;
-            }
+        /* 新增目录选择样式 */
+        .book-selector {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .book-selector select {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background-color: white;
+            color: #2c3e50;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .book-selector select:hover {
+            background-color: #f0f8ff;
+        }
+        .chapter-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .chapter-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .chapter-item:hover {
+            background-color: #e3f2fd;
+        }
+        .chapter-item.current {
+            background-color: #bbdefb;
+            font-weight: bold;
+        }
+        .toc-toggle {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <h1><i class="fas fa-book-reader"></i> 多小说阅读器</h1>
-            <div class="book-selector">
-                <button class="book-btn" data-book="novel1.txt">
-                    <i class="fas fa-book"></i> 小说一
-                </button>
-                <button class="book-btn" data-book="novel2.txt">
-                    <i class="fas fa-book"></i> 小说二
-                </button>
-            </div>
-        </div>
-        
-        <div class="main-content">
-            <div id="novel-container">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>正在加载小说内容...</p>
-                </div>
-            </div>
+    <div class="book-cover">小说阅读器</div>
+    
+    <div class="book-selector">
+        <select id="book-select">
+            <option value="novel1.txt">小说一</option>
+            <option value="novel2.txt">小说二</option>
+            <option value="novel3.txt">小说三</option>
+        </select>
+    </div>
+    
+    <div id="novel-container" class="container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>正在加载小说内容...</p>
         </div>
     </div>
     
     <div class="footer">
-        <p>多小说阅读器 &copy; 2023 | 阅读进度自动保存</p>
+        <p>小说阅读器 &copy; 2023 | 目录选择模式</p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const novelContainer = document.getElementById('novel-container');
-            const bookButtons = document.querySelectorAll('.book-btn');
+            const bookSelect = document.getElementById('book-select');
             
             let novelData = {
                 title: '',
@@ -299,8 +264,8 @@
                 chapters: []
             };
             
-            let currentBook = '';
             let currentChapter = 0;
+            let currentBook = 'novel1.txt';
 
             // 初始化 - 尝试从localStorage加载最后阅读的书和章节
             const lastBook = localStorage.getItem('lastBook') || 'novel1.txt';
@@ -310,32 +275,25 @@
             currentBook = lastBook;
             currentChapter = lastChapter;
             
-            // 激活当前书的按钮
-            document.querySelector(`.book-btn[data-book="${currentBook}"]`).classList.add('active');
+            // 设置选择框的值
+            bookSelect.value = currentBook;
             
             // 加载初始书籍
             loadNovel(currentBook);
 
             // 添加书籍选择事件监听器
-            bookButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const book = this.getAttribute('data-book');
-                    if (book !== currentBook) {
-                        // 移除所有active类
-                        bookButtons.forEach(btn => btn.classList.remove('active'));
-                        // 添加active类到当前按钮
-                        this.classList.add('active');
-                        
-                        // 保存当前阅读进度
-                        saveReadingProgress();
-                        
-                        // 加载新书
-                        currentBook = book;
-                        const savedChapter = parseInt(localStorage.getItem(`lastChapter_${currentBook}`)) || 0;
-                        currentChapter = savedChapter;
-                        loadNovel(currentBook);
-                    }
-                });
+            bookSelect.addEventListener('change', function() {
+                const book = this.value;
+                if (book !== currentBook) {
+                    // 保存当前阅读进度
+                    saveReadingProgress();
+                    
+                    // 加载新书
+                    currentBook = book;
+                    const savedChapter = parseInt(localStorage.getItem(`lastChapter_${currentBook}`)) || 0;
+                    currentChapter = savedChapter;
+                    loadNovel(currentBook);
+                }
             });
 
             function loadNovel(book) {
@@ -360,7 +318,7 @@
                     .catch(error => {
                         novelContainer.innerHTML = `
                             <div class="error">
-                                <h3><i class="fas fa-exclamation-triangle"></i> 加载小说失败</h3>
+                                <h3>加载小说失败</h3>
                                 <p>${error.message}</p>
                                 <p>请确保${book}文件与此HTML文件在同一目录下</p>
                             </div>
@@ -428,7 +386,7 @@
                 if (novelData.chapters.length === 0) {
                     novelContainer.innerHTML = `
                         <div class="empty-state">
-                            <i class="fas fa-book"></i>
+                            <i>😕</i>
                             <p>未找到章节内容或文件格式不正确</p>
                             <p>请确保文件格式符合要求</p>
                         </div>
@@ -436,47 +394,73 @@
                     return;
                 }
                 
-                const progressPercent = ((currentChapter + 1) / novelData.chapters.length) * 100;
-                
                 novelContainer.innerHTML = `
-                    <div class="book-info">
-                        <h2 class="book-title">${novelData.title}</h2>
-                        <div class="book-author">作者：${novelData.author}</div>
-                    </div>
+                    <header>
+                        <h1>${novelData.title}</h1>
+                        <div class="author">作者：${novelData.author}</div>
+                    </header>
                     
-                    <div class="book-intro">${novelData.intro}</div>
+                    <div class="intro">${novelData.intro}</div>
                     
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                    </div>
-                    <div class="progress-text">第 ${currentChapter + 1} 章 / 共 ${novelData.chapters.length} 章</div>
+                    <div class="progress">第 ${currentChapter + 1} 章 / 共 ${novelData.chapters.length} 章</div>
                     
                     <div class="chapter-container">
-                        <h3 class="chapter-title"><i class="fas fa-bookmark"></i> ${novelData.chapters[currentChapter].title}</h3>
-                        <div class="chapter-content">${novelData.chapters[currentChapter].content}</div>
+                        <h2 class="chapter-title">${novelData.chapters[currentChapter].title}</h2>
+                        <div class="content">${novelData.chapters[currentChapter].content}</div>
                     </div>
                     
                     <div class="navigation">
-                        <button id="prev-btn" class="nav-btn"><i class="fas fa-arrow-left"></i> 上一章</button>
-                        <div class="book-actions">
-                            <button id="save-btn" class="action-btn"><i class="fas fa-save"></i> 保存进度</button>
-                            <button id="reset-btn" class="action-btn"><i class="fas fa-undo"></i> 重置进度</button>
-                        </div>
-                        <button id="next-btn" class="nav-btn">下一章 <i class="fas fa-arrow-right"></i></button>
+                        <button id="prev-btn">上一章</button>
+                        <button id="toc-btn">显示目录</button>
+                        <button id="next-btn">下一章</button>
+                    </div>
+                    
+                    <div id="chapter-list" class="chapter-list" style="display: none;">
+                        ${renderChapterList()}
                     </div>
                 `;
                 
                 // 添加事件监听器
                 document.getElementById('prev-btn').addEventListener('click', goToPrevChapter);
                 document.getElementById('next-btn').addEventListener('click', goToNextChapter);
-                document.getElementById('save-btn').addEventListener('click', saveReadingProgress);
-                document.getElementById('reset-btn').addEventListener('click', resetReadingProgress);
+                document.getElementById('toc-btn').addEventListener('click', toggleChapterList);
                 
                 // 更新按钮状态
                 updateButtonState();
                 
                 // 保存阅读进度
                 saveReadingProgress();
+            }
+            
+            function renderChapterList() {
+                return novelData.chapters.map((chapter, index) => `
+                    <div class="chapter-item ${index === currentChapter ? 'current' : ''}" data-chapter="${index}">
+                        ${chapter.title}
+                    </div>
+                `).join('');
+            }
+            
+            function toggleChapterList() {
+                const chapterList = document.getElementById('chapter-list');
+                if (chapterList.style.display === 'none') {
+                    chapterList.style.display = 'block';
+                    document.getElementById('toc-btn').textContent = '隐藏目录';
+                    
+                    // 添加章节点击事件
+                    document.querySelectorAll('.chapter-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const chapterIndex = parseInt(this.getAttribute('data-chapter'));
+                            if (chapterIndex !== currentChapter) {
+                                currentChapter = chapterIndex;
+                                renderNovel();
+                                window.scrollTo(0, 0);
+                            }
+                        });
+                    });
+                } else {
+                    chapterList.style.display = 'none';
+                    document.getElementById('toc-btn').textContent = '显示目录';
+                }
             }
 
             function goToPrevChapter() {
@@ -515,34 +499,6 @@
             function saveReadingProgress() {
                 localStorage.setItem('lastBook', currentBook);
                 localStorage.setItem(`lastChapter_${currentBook}`, currentChapter);
-                
-                // 显示保存提示
-                const toast = document.createElement('div');
-                toast.textContent = '进度已保存！';
-                toast.style.position = 'fixed';
-                toast.style.bottom = '20px';
-                toast.style.left = '50%';
-                toast.style.transform = 'translateX(-50%)';
-                toast.style.backgroundColor = '#4ca1af';
-                toast.style.color = 'white';
-                toast.style.padding = '10px 20px';
-                toast.style.borderRadius = '5px';
-                toast.style.zIndex = '1000';
-                toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-                
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 2000);
-            }
-            
-            function resetReadingProgress() {
-                if (confirm('确定要重置阅读进度吗？这将回到第一章。')) {
-                    currentChapter = 0;
-                    renderNovel();
-                    window.scrollTo(0, 0);
-                }
             }
         });
     </script>
