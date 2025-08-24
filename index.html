@@ -259,13 +259,6 @@
 
     
     <div id="novel-container" class="container">
-            <div class="book-selector">
-        <select id="book-select">
-            <option value="novel1.txt">小说一</option>
-            <option value="novel2.txt">小说二</option>
-            <option value="novel3.txt">小说三</option>
-        </select>
-    </div>
         <div class="loading">
             <div class="spinner"></div>
             <p>正在加载小说内容...</p>
@@ -319,6 +312,13 @@
 
             function loadNovel(book) {
                 novelContainer.innerHTML = `
+                    <div class="book-selector">
+                        <select id="book-select">
+                            <option value="novel1.txt">小说一</option>
+                            <option value="novel2.txt">小说二</option>
+                            <option value="novel3.txt">小说三</option>
+                        </select>
+                    </div>
                     <div class="loading">
                         <div class="spinner"></div>
                         <p>正在加载 ${book}...</p>
@@ -338,6 +338,13 @@
                     })
                     .catch(error => {
                         novelContainer.innerHTML = `
+                            <div class="book-selector">
+                                <select id="book-select">
+                                    <option value="novel1.txt">小说一</option>
+                                    <option value="novel2.txt">小说二</option>
+                                    <option value="novel3.txt">小说三</option>
+                                </select>
+                            </div>
                             <div class="error">
                                 <h3>加载小说失败</h3>
                                 <p>${error.message}</p>
@@ -406,6 +413,13 @@
             function renderNovel() {
                 if (novelData.chapters.length === 0) {
                     novelContainer.innerHTML = `
+                        <div class="book-selector">
+                            <select id="book-select">
+                                <option value="novel1.txt">小说一</option>
+                                <option value="novel2.txt">小说二</option>
+                                <option value="novel3.txt">小说三</option>
+                            </select>
+                        </div>
                         <div class="empty-state">
                             <i>😕</i>
                             <p>未找到章节内容或文件格式不正确</p>
@@ -416,6 +430,13 @@
                 }
                 
                 novelContainer.innerHTML = `
+                    <div class="book-selector">
+                        <select id="book-select">
+                            <option value="novel1.txt">小说一</option>
+                            <option value="novel2.txt">小说二</option>
+                            <option value="novel3.txt">小说三</option>
+                        </select>
+                    </div>
                     <header>
                         <h1>${novelData.title}</h1>
                         <div class="author">作者：${novelData.author}</div>
