@@ -119,6 +119,35 @@
             font-size: 17px;
             font-weight: bold;
         }
+        .chapter-input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            gap: 10px;
+        }
+        .chapter-input {
+            padding: 10px 15px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100px;
+            text-align: center;
+        }
+        .chapter-input-btn {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .chapter-input-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
         .empty-state {
             text-align: center;
             padding: 60px 0;
@@ -176,6 +205,16 @@
             margin-top: 30px;
             color: #7f8c8d;
             font-size: 14px;
+        }
+        .header-info {
+            transition: all 0.3s ease;
+        }
+        .chapter-only .header-info {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
@@ -283,13 +322,19 @@
                     return;
                 }
                 
+                // 根据当前章节决定是否显示标题、作者和简介
+                const isFirstChapter = currentChapter === 0;
+                
                 novelContainer.innerHTML = `
-                    <header>
-                        <h1>${novelData.title}</h1>
-                        <div class="author">作者：${novelData.author}</div>
-                    </header>
-                    
-                    <div class="intro">${novelData.intro}</div>
+                    ${isFirstChapter ? `
+                    <div class="header-info">
+                        <header>
+                            <h1>${novelData.title}</h1>
+                            <div class="author">作者：${novelData.author}</div>
+                        </header>
+                        <div class="intro">${novelData.intro}</div>
+                    </div>
+                    ` : ''}
                     
                     <div class="chapter-container">
                         <h2 class="chapter-title">${novelData.chapters[currentChapter].title}</h2>
@@ -298,15 +343,34 @@
                     
                     <div class="progress">第 ${currentChapter + 1} 章 / 共 ${novelData.chapters.length} 章</div>
                     
+                    <div class="chapter-input-container">
+                        <span>跳转到章节:</span>
+                        <input type="number" id="chapter-input" class="chapter-input" min="1" max="${novelData.chapters.length}" value="${currentChapter + 1}">
+                        <button id="chapter-jump-btn" class="chapter-input-btn">跳转</button>
+                    </div>
+                    
                     <div class="navigation">
                         <button id="prev-btn">上一章</button>
                         <button id="next-btn">下一章</button>
                     </div>
                 `;
                 
+                // 如果不是第一章，添加一个类来隐藏标题区域
+                if (!isFirstChapter) {
+                    novelContainer.classList.add('chapter-only');
+                } else {
+                    novelContainer.classList.remove('chapter-only');
+                }
+                
                 // 添加事件监听器
                 document.getElementById('prev-btn').addEventListener('click', goToPrevChapter);
                 document.getElementById('next-btn').addEventListener('click', goToNextChapter);
+                document.getElementById('chapter-jump-btn').addEventListener('click', jumpToChapter);
+                document.getElementById('chapter-input').addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        jumpToChapter();
+                    }
+                });
                 
                 // 更新按钮状态
                 updateButtonState();
@@ -330,6 +394,27 @@
                 } else {
                     alert('已经是最后一章了！');
                 }
+            }
+
+            function jumpToChapter() {
+                const input = document.getElementById('chapter-input');
+                const chapterNum = parseInt(input.value);
+                
+                if (isNaN(chapterNum)) {
+                    alert('请输入有效的章节编号！');
+                    input.value = currentChapter + 1;
+                    return;
+                }
+                
+                if (chapterNum < 1 || chapterNum > novelData.chapters.length) {
+                    alert(`章节编号超出范围！请输入 1 到 ${novelData.chapters.length} 之间的数字。`);
+                    input.value = currentChapter + 1;
+                    return;
+                }
+                
+                currentChapter = chapterNum - 1;
+                renderNovel();
+                window.scrollTo(0, 0);
             }
 
             function updateButtonState() {
