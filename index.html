@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小说阅读器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            margin-top: 20px;
+            position: relative;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .author {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .intro {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+            font-style: italic;
+            color: #555;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.8;
+        }
+        .chapter-container {
+            margin: 30px 0;
+        }
+        .chapter-title {
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+        }
+        .chapter-title:before {
+            content: "📖";
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        .content {
+            font-size: 18px;
+            white-space: pre-line;
+            text-align: justify;
+            line-height: 1.9;
+            text-indent: 2em;
+            margin: 0 10px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        button {
+            padding: 14px 30px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 17px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: linear-gradient(to right, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #7f8c8d;
+        }
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            display: block;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 40px 0;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .book-cover {
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            margin: 0 auto 25px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="book-cover">小说阅读器</div>
+    
+    <div id="novel-container" class="container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>正在加载小说内容...</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const novelContainer = document.getElementById('novel-container');
+            
+            let novelData = {
+                title: '',
+                author: '',
+                intro: '',
+                chapters: []
+            };
+            
+            let currentChapter = 0;
+
+            // 直接获取novel.txt文件
+            fetch('novel.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('文件加载失败: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(content => {
+                    parseNovel(content);
+                    renderNovel();
+                })
+                .catch(error => {
+                    novelContainer.innerHTML = `
+                        <div class="error">
+                            <h3>加载小说失败</h3>
+                            <p>${error.message}</p>
+                            <p>请确保novel.txt文件与此HTML文件在同一目录下</p>
+                        </div>
+                    `;
+                });
+
+            function parseNovel(content) {
+                const lines = content.split('\n');
+                
+                // 解析标题和作者
+                novelData.title = lines[0]?.trim() || '未知标题';
+                novelData.author = lines[1]?.replace('作者：', '').trim() || '未知作者';
+                
+                // 解析简介（第4行到下一个空行）
+                let introStart = 3; // 第4行（索引为3）
+                novelData.intro = '';
+                for (let i = introStart; i < lines.length; i++) {
+                    if (lines[i].trim() === '') break;
+                    novelData.intro += lines[i].trim() + '\n';
+                }
+                
+                // 解析章节
+                novelData.chapters = [];
+                let chapter = null;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    
+                    if (line === '' && i < lines.length - 1) {
+                        // 空行后可能是章节标题
+                        const nextLine = lines[i + 1].trim();
+                        if (nextLine.startsWith('第') && nextLine.includes('章')) {
+                            // 找到新章节
+                            if (chapter) {
+                                novelData.chapters.push(chapter);
+                            }
+                            chapter = {
+                                title: nextLine,
+                                content: ''
+                            };
+                            i++; // 跳过章节标题行
+                        }
+                    } else if (chapter && line !== '') {
+                        // 添加内容到当前章节
+                        chapter.content += line + '\n';
+                    }
+                }
+                
+                // 添加最后一个章节
+                if (chapter) {
+                    novelData.chapters.push(chapter);
+                }
+            }
+
+            function renderNovel() {
+                if (novelData.chapters.length === 0) {
+                    novelContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i>😕</i>
+                            <p>未找到章节内容或文件格式不正确</p>
+                            <p>请确保novel.txt文件格式符合要求</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                novelContainer.innerHTML = `
+                    <header>
+                        <h1>${novelData.title}</h1>
+                        <div class="author">作者：${novelData.author}</div>
+                    </header>
+                    
+                    <div class="intro">${novelData.intro}</div>
+                    
+                    <div class="chapter-container">
+                        <h2 class="chapter-title">${novelData.chapters[currentChapter].title}</h2>
+                        <div class="content">${novelData.chapters[currentChapter].content}</div>
+                    </div>
+                    
+                    <div class="progress">第 ${currentChapter + 1} 章 / 共 ${novelData.chapters.length} 章</div>
+                    
+                    <div class="navigation">
+                        <button id="prev-btn">上一章</button>
+                        <button id="next-btn">下一章</button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('prev-btn').addEventListener('click', goToPrevChapter);
+                document.getElementById('next-btn').addEventListener('click', goToNextChapter);
+                
+                // 更新按钮状态
+                updateButtonState();
+            }
+
+            function goToPrevChapter() {
+                if (currentChapter > 0) {
+                    currentChapter--;
+                    renderNovel();
+                    window.scrollTo(0, 0);
+                } else {
+                    alert('已经是第一章了！');
+                }
+            }
+
+            function goToNextChapter() {
+                if (currentChapter < novelData.chapters.length - 1) {
+                    currentChapter++;
+                    renderNovel();
+                    window.scrollTo(0, 0);
+                } else {
+                    alert('已经是最后一章了！');
+                }
+            }
+
+            function updateButtonState() {
+                const prevBtn = document.getElementById('prev-btn');
+                const nextBtn = document.getElementById('next-btn');
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentChapter === 0;
+                }
+                
+                if (nextBtn) {
+                    nextBtn.disabled = currentChapter === novelData.chapters.length - 1;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
