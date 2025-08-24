@@ -1,4 +1,4 @@
 # webReader
  made by DeppSeek R1
 
-[web](https://hydrogentaed233.github.io)
+[web](https://hydrogenated233.github.io/webReader/)
